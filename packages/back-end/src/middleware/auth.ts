@@ -2,7 +2,10 @@ import {NextFunction, Request, Response} from 'express';
 import {Session, User} from '../services/db';
 
 export function attachSession(req: Request, res: Response, next: NextFunction) {
-  if (!req.cookies?.SESSION_TOKEN) {
+  
+  const sessionToken = req.headers.cookies
+
+  if (!sessionToken) {
     return next();
   }
   req.session = {
@@ -12,7 +15,7 @@ export function attachSession(req: Request, res: Response, next: NextFunction) {
 
   Session.findOne({
     where: {
-      token: req.cookies.SESSION_TOKEN,
+      token: sessionToken,
     },
   })
     .then(sess => {
